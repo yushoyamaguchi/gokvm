@@ -39,6 +39,11 @@ checkbinaries:
 	@which awk
 	@which grep
 	@which cut
+	@which socat
+	@which ip
+	@which tcpdump
+	@which iptables
+	@which curl
 
 initrd: checkbinaries ./scripts/get_initrd.bash $(GOPATH)/bin/u-root
 	./scripts/get_initrd.bash

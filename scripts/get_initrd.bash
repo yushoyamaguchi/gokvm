@@ -37,6 +37,11 @@ if [ $? -ne 0 ]; then
     -files `which awk` \
     -files `which grep` \
     -files `which cut` \
+    -files `which ip` \
+    -files `which tcpdump` \
+    -files `which socat` \
+    -files `which curl` \
+    -files `which iptables` \
     -files "/usr/share/terminfo/l/linux-c:/usr/share/terminfo/l/linux" \
     -files "/usr/share/misc/pci.ids" \
     -files "${pwd}/.bashrc:.bashrc" \
