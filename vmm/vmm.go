@@ -15,16 +15,17 @@ import (
 // Config defines the configuration of the
 // virtual machine, as determined by flags.
 type Config struct {
-	Debug      bool
-	Dev        string
-	Kernel     string
-	Initrd     string
-	Params     string
-	TapIfName  string
-	Disk       string
-	NCPUs      int
-	MemSize    int
-	TraceCount int
+	Debug       bool
+	Dev         string
+	Kernel      string
+	Initrd      string
+	Params      string
+	TapIfName   string
+	AFXDPIfName string
+	Disk        string
+	NCPUs       int
+	MemSize     int
+	TraceCount  int
 }
 
 type VMM struct {
@@ -48,6 +49,15 @@ func (v *VMM) Init() error {
 
 	if len(v.TapIfName) > 0 {
 		if err := m.AddTapIf(v.TapIfName); err != nil {
+			return err
+		}
+	}
+
+	if len(v.AFXDPIfName) > 0 {
+		if len(v.TapIfName) > 0 {
+			return fmt.Errorf("cannot use both tap and afxdp interfaces")
+		}
+		if err := m.AddAFXDPIf(v.AFXDPIfName); err != nil {
 			return err
 		}
 	}

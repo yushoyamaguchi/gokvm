@@ -208,6 +208,11 @@ func (m *Machine) AddTapIf(tapIfName string) error {
 	return nil
 }
 
+func (m *Machine) AddAFXDPIf(afxdpIfName string) error {
+	log.Printf("AF_XDP interface %s", afxdpIfName)
+	return nil
+}
+
 func (m *Machine) AddDisk(diskPath string) error {
 	v, err := virtio.NewBlk(diskPath, virtioBlkIRQ, m, m.mem)
 	if err != nil {

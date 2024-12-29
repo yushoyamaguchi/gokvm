@@ -11,15 +11,16 @@ import (
 var ErrorInvalidSubcommands = errors.New("expected 'boot' or 'probe' subcommands")
 
 type BootArgs struct {
-	Kernel     string
-	MemSize    int
-	NCPUs      int
-	Dev        string
-	Initrd     string
-	Params     string
-	TapIfName  string
-	Disk       string
-	TraceCount int
+	Kernel      string
+	MemSize     int
+	NCPUs       int
+	Dev         string
+	Initrd      string
+	Params      string
+	TapIfName   string
+	AFXDPIfName string
+	Disk        string
+	TraceCount  int
 }
 
 func parseBootArgs(args []string) (*BootArgs, error) {
@@ -41,6 +42,8 @@ func parseBootArgs(args []string) (*BootArgs, error) {
 		"kernel command-line parameters")
 	bootCmd.StringVar(&c.TapIfName, "t", "", `name of tap interface. `+
 		`If the string is an empty, no tap intarface is created. (default"")`)
+	bootCmd.StringVar(&c.AFXDPIfName, "x", "", `name of afxdp interface. `+
+		`If the string is an empty, no afxdp intarface is created. (default"")`)
 	bootCmd.StringVar(&c.Disk, "d", "", "path of disk file (for /dev/vda)")
 
 	bootCmd.IntVar(&c.NCPUs, "c", 1, "number of cpus")

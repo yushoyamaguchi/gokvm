@@ -17,15 +17,16 @@ func main() {
 
 	if bootArgs != nil {
 		c := &vmm.Config{
-			Dev:        bootArgs.Dev,
-			Kernel:     bootArgs.Kernel,
-			Initrd:     bootArgs.Initrd,
-			Params:     bootArgs.Params,
-			TapIfName:  bootArgs.TapIfName,
-			Disk:       bootArgs.Disk,
-			NCPUs:      bootArgs.NCPUs,
-			MemSize:    bootArgs.MemSize,
-			TraceCount: bootArgs.TraceCount,
+			Dev:         bootArgs.Dev,
+			Kernel:      bootArgs.Kernel,
+			Initrd:      bootArgs.Initrd,
+			Params:      bootArgs.Params,
+			TapIfName:   bootArgs.TapIfName,
+			AFXDPIfName: bootArgs.AFXDPIfName,
+			Disk:        bootArgs.Disk,
+			NCPUs:       bootArgs.NCPUs,
+			MemSize:     bootArgs.MemSize,
+			TraceCount:  bootArgs.TraceCount,
 		}
 
 		vmm := vmm.New(*c)
