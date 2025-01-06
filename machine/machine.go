@@ -23,6 +23,7 @@ import (
 	"github.com/bobuhiro11/gokvm/pvh"
 	"github.com/bobuhiro11/gokvm/serial"
 	"github.com/bobuhiro11/gokvm/tap"
+	"github.com/bobuhiro11/gokvm/vhost"
 	"github.com/bobuhiro11/gokvm/virtio"
 	"golang.org/x/arch/x86/x86asm"
 )
@@ -198,6 +199,8 @@ func (m *Machine) AddTapIf(tapIfName string) error {
 	if err != nil {
 		return err
 	}
+
+	vhost.NewVhostNet()
 
 	v := virtio.NewNet(virtioNetIRQ, m, t, m.mem)
 	go v.TxThreadEntry()
