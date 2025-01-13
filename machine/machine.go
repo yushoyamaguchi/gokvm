@@ -200,13 +200,13 @@ func (m *Machine) AddTapIf(tapIfName string) error {
 		return err
 	}
 
-	vhost.NewVhostNet()
-
 	v := virtio.NewNet(virtioNetIRQ, m, t, m.mem)
 	go v.TxThreadEntry()
 	go v.RxThreadEntry()
 	// 00:01.0 for Virtio net
 	m.pci.Devices = append(m.pci.Devices, v)
+
+	vhost.NewVhostNet()
 
 	return nil
 }
