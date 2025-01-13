@@ -6,15 +6,6 @@ import (
 	"unsafe"
 )
 
-var (
-	VHOSTVIRTIO                = 0xAF
-	VHOST_GET_BACKEND_FEATURES = IOR(
-		uintptr(VHOSTVIRTIO),
-		0x26,
-		uintptr(unsafe.Sizeof(uint64(0))),
-	)
-)
-
 type VhostNet struct {
 	vhostfd int
 }
@@ -50,9 +41,15 @@ func NewVhostNet() (*VhostNet, error) {
 	feature := uint64(0)
 	_, err = ioctl(uintptr(vhost.vhostfd), VHOST_GET_BACKEND_FEATURES, uintptr(unsafe.Pointer(&feature)))
 	if err != nil {
-		fmt.Printf("ioctl: %v\n", err)
+		fmt.Printf("ioctl VHOST_GET_BACKEND_FEATURES: %v\n", err)
 		return nil, err
 	}
 	fmt.Printf("feature: %v\n", feature)
+	_, err = ioctl(uintptr(vhost.vhostfd), VHOST_SET_OWNER, 0)
+	if err != nil {
+		fmt.Printf("ioctl VHOST_SET_OWNER: %v\n", err)
+		return nil, err
+	}
+
 	return vhost, nil
 }

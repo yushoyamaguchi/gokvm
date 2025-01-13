@@ -1,5 +1,7 @@
 package vhost
 
+import "unsafe"
+
 const (
 	iocNBits    = 8
 	iocTypeBits = 8
@@ -17,6 +19,24 @@ const (
 	IOC_WRITE = 1
 	IOC_READ  = 2
 )
+
+var (
+	VHOSTVIRTIO                = 0xAF
+	VHOST_GET_BACKEND_FEATURES = IOR(
+		uintptr(VHOSTVIRTIO),
+		0x26,
+		uintptr(unsafe.Sizeof(uint64(0))),
+	)
+	VHOST_SET_OWNER = IO(
+		uintptr(VHOSTVIRTIO),
+		0x01,
+	)
+)
+
+// _IO() 相当のラッパ (データの受け渡しが不要な場合)
+func IO(t, nr uintptr) uintptr {
+	return IOC(IOC_NONE, t, nr, 0)
+}
 
 // _IOC() 相当の関数
 func IOC(dir, t, nr, size uintptr) uintptr {
