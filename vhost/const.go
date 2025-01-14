@@ -18,6 +18,8 @@ const (
 	IOC_NONE  = 0
 	IOC_WRITE = 1
 	IOC_READ  = 2
+
+	DefaultNVQs = 2
 )
 
 var (

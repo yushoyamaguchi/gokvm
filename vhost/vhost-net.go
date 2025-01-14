@@ -8,6 +8,7 @@ import (
 
 type VhostNet struct {
 	vhostfd int
+	nvqs    uint
 }
 
 func open(name string, flags int) (int, error) {
@@ -28,9 +29,16 @@ func ioctl(fd, op, arg uintptr) (uintptr, error) {
 	return res, nil
 }
 
+func (v *VhostNet) vhostVirtqueueInit() error {
+	fmt.Println("vhostVirtqueueInit")
+	return nil
+}
+
 func NewVhostNet() (*VhostNet, error) {
 	fmt.Println("NewVhostNet")
-	vhost := &VhostNet{}
+	vhost := &VhostNet{
+		nvqs: DefaultNVQs,
+	}
 	vhostfd, err := open("/dev/vhost-net", syscall.O_RDWR)
 	if err != nil {
 		fmt.Printf("open: %v\n", err)
@@ -50,6 +58,8 @@ func NewVhostNet() (*VhostNet, error) {
 		fmt.Printf("ioctl VHOST_SET_OWNER: %v\n", err)
 		return nil, err
 	}
+
+	vhost.vhostVirtqueueInit()
 
 	return vhost, nil
 }
