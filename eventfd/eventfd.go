@@ -5,12 +5,15 @@ import (
 	"syscall"
 )
 
+const EFD_NONBLOCK = 0x800
+
 type Eventfd struct {
 	fd int
 }
 
 func Create() (*Eventfd, error) {
-	fd, _, errno := syscall.Syscall(syscall.SYS_EVENTFD2, 0, 0, 0)
+	// Use EFD_NONBLOCK flag for non-blocking mode
+	fd, _, errno := syscall.Syscall(syscall.SYS_EVENTFD2, 0, EFD_NONBLOCK, 0)
 	if errno != 0 {
 		return nil, errno
 	}
@@ -25,6 +28,10 @@ func (e *Eventfd) Read() (uint64, error) {
 	var buf [8]byte
 	_, err := syscall.Read(e.fd, buf[:])
 	if err != nil {
+		if err == syscall.EAGAIN {
+			// No data to read in non-blocking mode
+			return 0, nil
+		}
 		return 0, err
 	}
 	return binary.LittleEndian.Uint64(buf[:]), nil
