@@ -95,3 +95,17 @@ clean:
 qemu: initrd bzImage
 	qemu-system-x86_64 -kernel ./bzImage -initrd ./initrd --nographic --enable-kvm \
 		--append "root=/dev/ram rw console=ttyS0 rdinit=/init" --enable-kvm
+
+qemu-network: initrd bzImage
+	sudo ip tuntap add dev tap0 mode tap
+	sudo ip link set tap0 up
+	sudo ip addr add 192.168.100.1/24 dev tap0
+	qemu-system-x86_64 -kernel ./bzImage -initrd ./initrd --nographic --enable-kvm \
+		--append "root=/dev/ram rw console=ttyS0 rdinit=/init" \
+		-netdev tap,id=net0,ifname=tap0,script=no,downscript=no,vhost=on \
+		-device virtio-net-pci,netdev=net0
+
+
+destroy-network:
+	sudo ip link set tap0 down
+	sudo ip tuntap del dev tap0 mode tap
