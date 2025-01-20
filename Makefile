@@ -115,6 +115,7 @@ myqemu-network: initrd bzImage
 		-device virtio-net-pci,netdev=net0 -D qemu.log
 
 
-destroy-network:
+destroy:
+	sudo pkill -f qemu
 	sudo ip link set tap0 down
 	sudo ip tuntap del dev tap0 mode tap
