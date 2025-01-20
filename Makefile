@@ -112,7 +112,7 @@ myqemu-network: initrd bzImage
 	sudo ../../qemu/build/qemu-system-x86_64 -kernel ./bzImage -initrd ./initrd --nographic --enable-kvm \
 		--append "root=/dev/ram rw console=ttyS0 rdinit=/init" \
 		-netdev tap,id=net0,ifname=tap0,script=no,downscript=no,vhost=on \
-		-device virtio-net-pci,netdev=net0
+		-device virtio-net-pci,netdev=net0 -D qemu.log
 
 
 destroy-network:
