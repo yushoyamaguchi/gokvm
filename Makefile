@@ -117,5 +117,6 @@ myqemu-network: initrd bzImage
 
 destroy:
 	sudo pkill -f qemu
+	sleep 1
 	sudo ip link set tap0 down
 	sudo ip tuntap del dev tap0 mode tap
