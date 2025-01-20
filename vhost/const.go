@@ -33,6 +33,11 @@ var (
 		uintptr(VHOSTVIRTIO),
 		0x01,
 	)
+	VHOST_SET_VRING_CALL = IOW(
+		uintptr(VHOSTVIRTIO),
+		0x21,
+		uintptr(unsafe.Sizeof(VhostVringFile{})),
+	)
 )
 
 // _IO() 相当のラッパ (データの受け渡しが不要な場合)

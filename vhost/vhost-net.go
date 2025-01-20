@@ -4,11 +4,27 @@ import (
 	"fmt"
 	"syscall"
 	"unsafe"
+
+	"github.com/bobuhiro11/gokvm/eventfd"
 )
 
+type VhostDev struct {
+}
+
 type VhostNet struct {
+	dev     VhostDev
 	vhostfd int
 	nvqs    uint
+	vq      [DefaultNVQs]VhostVirtqueue
+}
+
+type VhostVirtqueue struct {
+	maskedNotifier eventfd.EventNotifier
+}
+
+type VhostVringFile struct {
+	Index uint32
+	FD    int32
 }
 
 func open(name string, flags int) (int, error) {
@@ -29,14 +45,27 @@ func ioctl(fd, op, arg uintptr) (uintptr, error) {
 	return res, nil
 }
 
-func (v *VhostNet) vhostVirtqueueInit() error {
+func (v *VhostNet) vhostVirtqueueInit(vq *VhostVirtqueue, index uint) error {
 	fmt.Println("vhostVirtqueueInit")
+	err := vq.maskedNotifier.EventNotifierInit()
+	if err != nil {
+		fmt.Printf("EventNotifierInit: %v\n", err)
+	}
+	file := VhostVringFile{
+		Index: uint32(index),
+	}
+	file.FD = int32(vq.maskedNotifier.GetWfd())
+	_, err = ioctl(uintptr(v.vhostfd), VHOST_SET_VRING_CALL, uintptr(unsafe.Pointer(&file)))
+	if err != nil {
+		fmt.Printf("ioctl VHOST_SET_VRING_CALL: %v\n", err)
+	}
 	return nil
 }
 
 func NewVhostNet() (*VhostNet, error) {
 	fmt.Println("NewVhostNet")
 	vhost := &VhostNet{
+		dev:  VhostDev{},
 		nvqs: DefaultNVQs,
 	}
 	vhostfd, err := open("/dev/vhost-net", syscall.O_RDWR)
@@ -59,7 +88,9 @@ func NewVhostNet() (*VhostNet, error) {
 		return nil, err
 	}
 
-	vhost.vhostVirtqueueInit()
+	for i := uint(0); i < vhost.nvqs; i++ {
+		vhost.vhostVirtqueueInit(&vhost.vq[i], i)
+	}
 
 	return vhost, nil
 }
